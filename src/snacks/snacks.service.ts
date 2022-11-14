@@ -7,13 +7,15 @@ import { ISnackBody } from './snackInterface';
 @Injectable()
 export class SnacksService {
   async create(createSnackDto: CreateSnackDto) {
-    return mockData.push({
+    mockData.push({
       id: Math.floor(Math.random() * 100),
       name: createSnackDto.name,
       description: createSnackDto.description,
       price: createSnackDto.price,
       img: createSnackDto.img,
     });
+
+    return mockData
   }
 
   async findAll() {
