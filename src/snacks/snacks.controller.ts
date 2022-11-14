@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ParseIntPipe,
@@ -12,22 +11,27 @@ import {
 import { SnacksService } from './snacks.service';
 import { CreateSnackDto } from './dto/create-snack.dto';
 import { ISnackBody } from './snackInterface';
+import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
 
 @Controller('snacks')
 export class SnacksController {
   constructor(private readonly snacksService: SnacksService) {}
 
   @Post()
+  @ApiCreatedResponse({ description: 'Post new snacks' })
+  @ApiBody({ type: CreateSnackDto })
   async create(@Body() createSnackDto: CreateSnackDto) {
     return await this.snacksService.create(createSnackDto);
   }
 
   @Get()
+  @ApiCreatedResponse({ description: 'Get all the snacks' })
   async findAll() {
     return await this.snacksService.findAll();
   }
 
   @Get(':id')
+  @ApiCreatedResponse({ description: 'Get a specific snack by id' })
   async findOne(
     @Param(
       'id',
@@ -39,6 +43,7 @@ export class SnacksController {
   }
 
   @Delete(':id')
+  @ApiCreatedResponse({ description: 'Delete a specific snack by id' })
   async delete(
     @Param(
       'id',

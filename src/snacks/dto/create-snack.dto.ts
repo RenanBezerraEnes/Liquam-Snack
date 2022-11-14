@@ -1,9 +1,17 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateSnackDto {
-  constructor(
-    public id: number,
-    public name: string,
-    public description: string,
-    public price: number,
-    public img: string,
-  ) {}
+  id: number;
+
+  @ApiProperty({ type: String, description: 'Snack Name' })
+  name: string;
+
+  @ApiProperty({ type: String, description: 'Snack Description' })
+  description: string;
+
+  @ApiProperty({ type: String, description: 'Snack Price' })
+  price: number;
+
+  @ApiProperty({ type: String, description: 'Snack Url' })
+  img: string;
 }
