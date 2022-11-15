@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { mockData } from 'MockData';
+import { PaginationHelper, PaginationResponse } from 'src/helpers/pagination-service-helper';
 import { CreateSnackDto } from './dto/create-snack.dto';
-import { ISnackBody } from './snackInterface';
+import { SnackPagination } from './dto/pagination-snack.dto';
+import { ISnackBody } from './interface/snackInterface';
 
 @Injectable()
 export class SnacksService {
@@ -18,7 +20,7 @@ export class SnacksService {
     return mockData
   }
 
-  async findAll() {
+  async findAll({size = 10, page = 1}: SnackPagination):  Promise<PaginationResponse<ISnackBody[]>> {
     const filterData = [];
     mockData.forEach((data: ISnackBody, index: number) => {
       if (data.price >= 150 && data.price <= 300) {
@@ -32,9 +34,9 @@ export class SnacksService {
       return 0;
     }
 
-    return {
-      data: filterData.sort(compare),
-    };;
+    const data = filterData.sort(compare);
+
+    return PaginationHelper.paginatedList({data, size, page});
   }
 
   async findOne(id: number): Promise<ISnackBody> {
