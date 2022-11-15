@@ -1,9 +1,20 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type SnackDoc = Snack & Document;
+@Schema({ timestamps: true })
 export class Snack {
-  constructor(
-    public id: number,
-    public snackName: string,
-    public snackDescription: string,
-    public snackPrice: number,
-    public snackImg: string,
-  ) {}
+  @Prop()
+  name: string;
+
+  @Prop()
+  description: string;
+
+  @Prop()
+  price: number;
+
+  @Prop()
+  img: string;
 }
+
+export const SnackSchema = SchemaFactory.createForClass(Snack);

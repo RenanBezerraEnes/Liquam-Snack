@@ -1,32 +1,46 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { mockData } from 'MockData';
-import { PaginationHelper, PaginationResponse } from 'src/helpers/pagination-service-helper';
 import { CreateSnackDto } from './dto/create-snack.dto';
 import { SnackPagination } from './dto/pagination-snack.dto';
 import { ISnackBody } from './interface/snackInterface';
+import { InjectModel } from '@nestjs/mongoose';
+import { Snack, SnackDoc } from './entities/snack.entity';
+import { Error, Model } from 'mongoose';
 
 @Injectable()
 export class SnacksService {
-  async create(createSnackDto: CreateSnackDto) {
-    mockData.push({
-      id: Math.floor(Math.random() * 100),
-      name: createSnackDto.name,
-      description: createSnackDto.description,
-      price: createSnackDto.price,
-      img: createSnackDto.img,
-    });
+  constructor(@InjectModel(Snack.name) private SnackModel: Model<SnackDoc>) {}
 
-    return mockData
+  async create(createSnackDto: CreateSnackDto): Promise<Snack> {
+    return await new this.SnackModel({
+      ...createSnackDto,
+      createdAt: new Date(),
+    }).save();
   }
 
-  async findAll({size = 10, page = 1}: SnackPagination):  Promise<PaginationResponse<ISnackBody[]>> {
-    const filterData = [];
-    mockData.forEach((data: ISnackBody, index: number) => {
-      if (data.price >= 150 && data.price <= 300) {
-        filterData.push(data);
-      }
-    });
+  async findAll({
+    size = 10,
+    page = 1,
+  }: SnackPagination): Promise<ISnackBody[]> {
+    const pagination = page < 2 ? 0 : page * size;
+    const filterData = await this.SnackModel.find(
+      {
+        $and: [
+          {
+            price: {
+              $gte: 150,
+            },
+          },
+          {
+            price: {
+              $lte: 300,
+            },
+          },
+        ],
+      },
+      {},
+      { skip: pagination, limit: size },
+    );
 
     function compare(a: ISnackBody, b: ISnackBody) {
       if (a.price < b.price) return -1;
@@ -35,26 +49,27 @@ export class SnacksService {
     }
 
     const data = filterData.sort(compare);
-
-    return PaginationHelper.paginatedList({data, size, page});
+    return data;
   }
 
-  async findOne(id: number): Promise<ISnackBody> {
-    const snackDB = await mockData.find((data: ISnackBody) => data.id === id);
-    if(!snackDB) {
+  async findOne(id: string): Promise<Snack> {
+    const snackDB = await this.SnackModel.findOne({ _id: id });
+    if (!snackDB) {
       throw new NotFoundException();
     }
-    return snackDB
+    return snackDB;
   }
 
-  async remove(id: number) {
-    const removeSnack = await mockData.findIndex((data: ISnackBody) => data.id === id);
-    if(removeSnack ===-1) {
-      throw new NotFoundException(`This snack with id:${id} does not exist`)
+  async remove(id: string) {
+    const snackDB = await this.findOne(id);
+    try {
+      if (snackDB) {
+        await this.SnackModel.deleteOne({ _id: id });
+      }
+    } catch (error) {
+      throw new Error(error.message);
     }
 
-    mockData.splice(removeSnack, 1)
-
-    return `Snack with id:${id} removed`
+    return `Snack with id:${id} removed`;
   }
 }
