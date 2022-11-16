@@ -13,7 +13,7 @@ import { SnacksModule } from './snacks/snacks.module';
     // }),
     // I removed the .env, otherwise you wouldn't have access to the db.
     MongooseModule.forRoot(
-      'mongodb+srv://RenanBezerra:webhacker_d3xmaya05012022@liquam-snack.kcscket.mongodb.net/liquam-snack?retryWrites=true&w=majority',
+      'mongodb+srv://RenanBezerra:ZmRh3d0clWzfOP9X@liquam-snack.kcscket.mongodb.net/liquam-snack?retryWrites=true&w=majority',
     ),
   ],
   controllers: [AppController],
