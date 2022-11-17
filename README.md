@@ -6,4 +6,4 @@ You can access the swagger in http://localhost:3000
 
 There you can find all the information about the endpoints.
 
-<img src="./Swagger%20-%20Liquam.jpg" width="700">
+<img src="./Swagger%20-%20Liquam.jpg" width="1000" >
