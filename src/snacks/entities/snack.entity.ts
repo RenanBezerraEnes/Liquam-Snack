@@ -4,16 +4,16 @@ import { Document } from 'mongoose';
 export type SnackDoc = Snack & Document;
 @Schema({ timestamps: true })
 export class Snack {
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
-  @Prop()
+  @Prop({ required: true })
   price: number;
 
-  @Prop()
+  @Prop({ required: true })
   img: string;
 }
 

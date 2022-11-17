@@ -9,12 +9,7 @@ import {
 } from '@nestjs/common';
 import { SnacksService } from './snacks.service';
 import { CreateSnackDto } from './dto/create-snack.dto';
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SnackPagination } from './dto/pagination-snack.dto';
 
 @Controller('snacks')
@@ -22,10 +17,12 @@ export class SnacksController {
   constructor(private readonly snacksService: SnacksService) {}
 
   @Post()
-  @ApiCreatedResponse({
-    description: 'In this endpoint, it is possible to post new snacks.',
-  })
   @ApiOperation({ summary: 'Post a new snack' })
+  @ApiResponse({
+    status: 201,
+    description: 'In this endpoint, it is possible to post new snacks.',
+    type: CreateSnackDto,
+  })
   @ApiBody({ type: CreateSnackDto })
   create(@Body() createSnackDto: CreateSnackDto) {
     return this.snacksService.create(createSnackDto);
