@@ -24,7 +24,7 @@ export class SnacksController {
     type: CreateSnackDto,
   })
   @ApiResponse({
-    status: 400,
+    status: 409,
     description: 'The fields are required, check the API documentation',
     type: CreateSnackDto,
   })
