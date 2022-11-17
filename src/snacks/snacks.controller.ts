@@ -9,7 +9,12 @@ import {
 } from '@nestjs/common';
 import { SnacksService } from './snacks.service';
 import { CreateSnackDto } from './dto/create-snack.dto';
-import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { SnackPagination } from './dto/pagination-snack.dto';
 
 @Controller('snacks')
@@ -20,13 +25,16 @@ export class SnacksController {
   @ApiCreatedResponse({
     description: 'In this endpoint, it is possible to post new snacks.',
   })
+  @ApiOperation({ summary: 'Post a new snack' })
   @ApiBody({ type: CreateSnackDto })
   create(@Body() createSnackDto: CreateSnackDto) {
     return this.snacksService.create(createSnackDto);
   }
 
   @Get()
-  @ApiCreatedResponse({
+  @ApiOperation({ summary: 'get all the snacks' })
+  @ApiResponse({
+    status: 200,
     description:
       'In this endpoint, it is possible to get all the snacks with prices from 150 to 300. I also added pagination. You can add page and size in the query.',
   })
@@ -35,7 +43,9 @@ export class SnacksController {
   }
 
   @Get(':id')
-  @ApiCreatedResponse({
+  @ApiOperation({ summary: 'get a specific snack by id' })
+  @ApiResponse({
+    status: 200,
     description: 'In this endpoint, you can get a snack by a specific id.',
   })
   findById(
@@ -46,7 +56,9 @@ export class SnacksController {
   }
 
   @Delete(':id')
-  @ApiCreatedResponse({
+  @ApiOperation({ summary: 'delete a specific snack by id' })
+  @ApiResponse({
+    status: 204,
     description: 'In this endpoint, you can delete a snack by a specific id.',
   })
   delete(
