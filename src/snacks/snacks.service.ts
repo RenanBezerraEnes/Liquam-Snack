@@ -21,35 +21,33 @@ export class SnacksService {
   async findAll({
     size = 10,
     page = 1,
-  }: SnackPagination): Promise<ISnackBody[]> {
+    minPrice,
+    maxPrice,
+    order,
+  }: SnackPagination) {
     const pagination = page < 2 ? 0 : page * size;
-    const filterData = await this.SnackModel.find(
-      {
-        $and: [
-          {
-            price: {
-              $gte: 150,
-            },
-          },
-          {
-            price: {
-              $lte: 300,
-            },
-          },
-        ],
-      },
-      {},
-      { skip: pagination, limit: size },
-    );
+    const filterMinPrice = minPrice ? { price: { $gte: minPrice } } : {};
+    const filterMaxPrice = maxPrice ? { price: { $lte: maxPrice } } : {};
+    const sorter = order?.split(',').reduce((acc, curr) => {
+      const value = curr[0] === '-' ? -1 : 1;
+      return {
+        ...acc,
+        [curr.replace('-', '')]: value,
+      };
+    }, {});
 
-    function compare(a: ISnackBody, b: ISnackBody) {
-      if (a.price < b.price) return -1;
-      if (a.price > b.price) return 1;
-      return 0;
-    }
+    const [listSnack, totalSnack] = await Promise.all([
+      this.SnackModel.find(
+        {
+          $and: [filterMinPrice, filterMaxPrice],
+        },
+        {},
+        { skip: pagination, limit: size },
+      ).sort(sorter ? sorter : { createdAt: -1 }),
+      this.SnackModel.count(),
+    ]);
 
-    const data = filterData.sort(compare);
-    return data;
+    return { data: listSnack, totalItem: totalSnack, page, size: Number(size) };
   }
 
   async findOne(id: string): Promise<Snack> {

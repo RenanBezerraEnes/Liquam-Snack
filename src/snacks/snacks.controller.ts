@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { SnacksService } from './snacks.service';
 import { CreateSnackDto } from './dto/create-snack.dto';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { SnackPagination } from './dto/pagination-snack.dto';
 
 @Controller('snacks')
@@ -35,12 +35,23 @@ export class SnacksController {
 
   @Get()
   @ApiOperation({ summary: 'get all the snacks' })
+  @ApiQuery({ type: Number, name: 'size' })
+  @ApiQuery({ type: Number, name: 'page' })
+  @ApiQuery({ type: Number, name: 'minPrice' })
+  @ApiQuery({ type: Number, name: 'maxPrice' })
+  @ApiQuery({ type: String, name: 'order' })
   @ApiResponse({
     status: 200,
-    description:
-      'In this endpoint, it is possible to get all the snacks with prices from 150 to 300. I also added pagination. You can add page and size in the query.',
+    description: `In this endpoint, it is possible to get all the snacks. </br> You can use the order as a query to check the price, description, etc... </br> I also added pagination. You can add page and size in the query`,
   })
-  findAll(@Query() query: SnackPagination) {
+  findAll(
+    @Query('size') size,
+    @Query('page') page,
+    @Query('minPrice') minPrice,
+    @Query('maxPrice') maxPrice,
+    @Query('order') order,
+  ) {
+    const query: SnackPagination = { size, page, minPrice, maxPrice, order };
     return this.snacksService.findAll(query);
   }
 
@@ -52,7 +63,7 @@ export class SnacksController {
   })
   @ApiResponse({
     status: 404,
-    description: 'ID Required',
+    description: 'Id not found',
   })
   findById(
     @Param('id')
@@ -69,7 +80,7 @@ export class SnacksController {
   })
   @ApiResponse({
     status: 404,
-    description: 'ID Required',
+    description: 'Id not found',
   })
   delete(
     @Param('id')

@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationErrorFilter } from 'helpers/validations.error.filter';
+import { CustomBadRequest } from 'exceptions/custom-bad-request-exception.filter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new ValidationErrorFilter());
+  app.useGlobalFilters(new CustomBadRequest());
   const options = new DocumentBuilder()
     .setTitle('Liquam Snack API')
     .setDescription('Liquam Snack API')
