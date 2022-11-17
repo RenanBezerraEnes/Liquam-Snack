@@ -23,6 +23,11 @@ export class SnacksController {
     description: 'In this endpoint, it is possible to post new snacks.',
     type: CreateSnackDto,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'The fields are required, check the API documentation',
+    type: CreateSnackDto,
+  })
   @ApiBody({ type: CreateSnackDto })
   create(@Body() createSnackDto: CreateSnackDto) {
     return this.snacksService.create(createSnackDto);
@@ -45,6 +50,10 @@ export class SnacksController {
     status: 200,
     description: 'In this endpoint, you can get a snack by a specific id.',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'ID Required',
+  })
   findById(
     @Param('id')
     id: string,
@@ -57,6 +66,10 @@ export class SnacksController {
   @ApiResponse({
     status: 204,
     description: 'In this endpoint, you can delete a snack by a specific id.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'ID Required',
   })
   delete(
     @Param('id')

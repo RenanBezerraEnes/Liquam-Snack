@@ -55,7 +55,7 @@ export class SnacksService {
   async findOne(id: string): Promise<Snack> {
     const snackDB = await this.SnackModel.findOne({ _id: id });
     if (!snackDB) {
-      throw new NotFoundException();
+      throw new NotFoundException(`id:${id}, not found`);
     }
     return snackDB;
   }
@@ -67,7 +67,7 @@ export class SnacksService {
         await this.SnackModel.deleteOne({ _id: id });
       }
     } catch (error) {
-      throw new Error(error.message);
+      throw new NotFoundException(`id:${id}, not found`);
     }
 
     return `Snack with id:${id} removed`;
