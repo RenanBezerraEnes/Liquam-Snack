@@ -8,10 +8,10 @@ export class CustomBadRequest implements RpcExceptionFilter {
     const ctx = host.switchToHttp(),
       response = ctx.getResponse();
 
-    return response.status(409).json({
-      statusCode: 409,
+    return response.status(400).json({
+      statusCode: 400,
       createdBy: 'ValidationErrorFilter',
-      errors: exception.errors,
+      errors: Object.values(exception.errors).map((item) => item.message),
     });
   }
 }

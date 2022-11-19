@@ -5,7 +5,7 @@ import { SnackPagination } from './dto/pagination-snack.dto';
 import { ISnackBody } from './interface/snackInterface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Snack, SnackDoc } from './entities/snack.entity';
-import { Error, Model } from 'mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class SnacksService {
@@ -50,17 +50,20 @@ export class SnacksService {
     return { data: listSnack, totalItem: totalSnack, page, size: Number(size) };
   }
 
-  async findOne(id: string): Promise<Snack> {
-    const snackDB = await this.SnackModel.findOne({ _id: id });
-    if (!snackDB) {
+  async findOne(id: string): Promise<Snack | any> {
+    try {
+      const snackDB = await this.SnackModel.findOne({ _id: id });
+      if (snackDB) {
+        return snackDB;
+      }
+    } catch (error) {
       throw new NotFoundException(`id:${id}, not found`);
     }
-    return snackDB;
   }
 
   async remove(id: string) {
-    const snackDB = await this.findOne(id);
     try {
+      const snackDB = await this.findOne(id);
       if (snackDB) {
         await this.SnackModel.deleteOne({ _id: id });
       }

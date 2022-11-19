@@ -24,8 +24,8 @@ export class SnacksController {
     type: CreateSnackDto,
   })
   @ApiResponse({
-    status: 409,
-    description: 'The fields are required, check the API documentation',
+    status: 400,
+    description: 'The fields are required, check the Schema',
     type: CreateSnackDto,
   })
   @ApiBody({ type: CreateSnackDto })
@@ -65,10 +65,11 @@ export class SnacksController {
     status: 404,
     description: 'Id not found',
   })
-  findById(
+  findOne(
     @Param('id')
     id: string,
   ) {
+    console.log(id);
     return this.snacksService.findOne(id);
   }
 
